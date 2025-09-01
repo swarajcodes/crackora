@@ -1,7 +1,7 @@
 import { db } from "@/drizzle/db";
 import { JobInfoTable } from "@/drizzle/schema";
-import { revalidateJobInfoCache } from "./dbCache";
 import { eq } from "drizzle-orm";
+import { revalidateJobInfoCache } from "./dbCache";
 
 export async function insertJobInfo(jobInfo: typeof JobInfoTable.$inferInsert) {
   const [newJobInfo] = await db.insert(JobInfoTable).values(jobInfo).returning({
