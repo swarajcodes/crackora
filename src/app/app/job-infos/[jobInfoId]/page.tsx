@@ -64,7 +64,7 @@ export default async function JobInfoPage({
   );
 
   return (
-    <div className="container my-4 space-y-4">
+    <div className="container my-4 space-y-4 max-w-6xl">
       <BackLink href="/app">Dashboard</BackLink>
 
       <div className="space-y-6">
