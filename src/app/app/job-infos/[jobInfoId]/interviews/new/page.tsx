@@ -7,6 +7,10 @@ import { Loader2Icon } from "lucide-react";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { fetchAccessToken } from "hume";
+import { env } from "@/data/env/server";
+import { VoiceProvider } from "@humeai/voice-react";
+import { StartCall } from "./_StartCall";
 
 export default async function NewInterviewPage({
   params,
@@ -35,6 +39,17 @@ async function SuspendedComponent({ jobInfoId }: { jobInfoId: string }) {
 
   const jobInfo = await getJobInfo(jobInfoId, userId);
   if (jobInfo == null) return notFound();
+
+  const accessToken = await fetchAccessToken({
+    apiKey: env.HUME_API_KEY,
+    secretKey: env.HUME_SECRET_KEY,
+  });
+
+  return (
+    <VoiceProvider>
+      <StartCall jobInfo={jobInfo} user={user} accessToken={accessToken} />
+    </VoiceProvider>
+  );
 
   return null;
 }
