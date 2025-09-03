@@ -3,9 +3,11 @@ import { InterviewTable } from "@/drizzle/schema";
 import { getInterviewJobInfoTag } from "@/features/interviews/dbCache";
 import { JobInfoBackLink } from "@/features/jobInfos/components/JobInfoBackLink";
 import { getJobInfoIdTag } from "@/features/jobInfos/dbCache";
+import { getCurrentUser } from "@/services/clerk/lib/getCurrentUser";
 import { and, desc, eq, isNotNull } from "drizzle-orm";
 import { Loader2Icon } from "lucide-react";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function InterviewsPage({
@@ -28,7 +30,14 @@ export default async function InterviewsPage({
 }
 
 async function SuspendedPage({ jobInfoId }: { jobInfoId: string }) {
-  return <div>Interview </div>;
+  const { userId, redirectToSignIn } = await getCurrentUser();
+  if (userId == null) return redirectToSignIn();
+
+  const interviews = await getInterviews(jobInfoId, userId);
+  if(interviews.length === 0){
+    return redirect(`/app/job-infos/${jobInfoId}/interviews/new`)
+  }
+  return <div>Interviews</div>;
 }
 
 async function getInterviews(jobInfoId: string, userId: string) {
